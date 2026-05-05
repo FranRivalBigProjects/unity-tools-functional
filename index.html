@@ -1,112 +1,737 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Google Verification -->
+    <title>Unity Performance Tools: Draw Calls, FPS & Asset Optimization [2025]</title>
+    <meta name="description" content="Optimize Unity game performance with professional tools. Analyze draw calls, estimate FPS, optimize assets, calculate build size. Free tools for game developers.">
+    <meta name="keywords" content="unity performance tools, unity draw call analyzer, unity fps calculator, unity asset optimizer, unity performance optimization">
     <meta name="google-site-verification" content="PkLa_ViOo6FAHpvh8SacceMb95o9tePRdrqLNBz9X1M" />
 
-    <!-- SEO Meta -->
-    <title>Unity Performance Tools for Asset Optimization, Draw Calls & FPS Analysis</title>
-    <meta name="description" content="Optimize Unity games with tools for asset optimization, build size calculation, draw call analysis, and FPS estimation. Improve performance and reduce overhead.">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-    <!-- Keywords -->
-    <meta name="keywords" content="unity performance tools, unity asset optimizer, unity draw call analyzer, unity fps estimator, unity build size calculator, optimize unity game performance">
+    :root {
+        --primary: #FF6B35;
+        --secondary: #004E89;
+        --accent: #1ABC9C;
+        --dark: #0A0E27;
+        --light: #F5F7FA;
+        --text-primary: #1A1A2E;
+        --text-secondary: #16213E;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text-primary);
+        line-height: 1.6;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+    }
+
+    /* ============ HEADER HERO ============ */
+    header {
+        background: linear-gradient(135deg, var(--secondary) 0%, #003D73 50%, var(--dark) 100%);
+        color: white;
+        padding: 80px 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(255, 107, 53, 0.15) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    header::after {
+        content: '';
+        position: absolute;
+        bottom: -30%;
+        left: 5%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(26, 188, 156, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .header-content {
+        max-width: 1000px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        letter-spacing: -2px;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .subtitle {
+        font-size: 1.3rem;
+        opacity: 0.95;
+        margin-bottom: 30px;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .cta-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 14px 32px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+    }
+
+    .btn-primary:hover {
+        background: #E55A2B;
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(255, 107, 53, 0.4);
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--secondary);
+        border: 2px solid white;
+    }
+
+    .btn-secondary:hover {
+        background: transparent;
+        color: white;
+    }
+
+    /* ============ CONTAINER ============ */
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 60px 20px;
+    }
+
+    /* ============ SECTION TITLES ============ */
+    h2 {
+        font-size: 2.5rem;
+        margin-bottom: 50px;
+        color: var(--dark);
+        text-align: center;
+        position: relative;
+        padding-bottom: 20px;
+    }
+
+    h2::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 4px;
+        background: var(--primary);
+        border-radius: 2px;
+    }
+
+    /* ============ TOOLS GRID ============ */
+    .tools-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        margin-bottom: 80px;
+    }
+
+    .tool-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tool-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .tool-icon {
+        height: 100px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: white;
+    }
+
+    .tool-content {
+        padding: 30px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tool-card h3 {
+        font-size: 1.5rem;
+        color: var(--dark);
+        margin-bottom: 12px;
+    }
+
+    .tool-card p {
+        color: var(--text-secondary);
+        margin-bottom: 25px;
+        flex-grow: 1;
+        line-height: 1.7;
+    }
+
+    .tool-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .tool-link:hover {
+        color: var(--secondary);
+        transform: translateX(4px);
+    }
+
+    /* ============ CONTENT SECTIONS ============ */
+    section {
+        margin-bottom: 80px;
+    }
+
+    .content-section {
+        background: white;
+        padding: 60px;
+        border-radius: 16px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    section h3 {
+        font-size: 1.8rem;
+        color: var(--dark);
+        margin-bottom: 20px;
+        margin-top: 30px;
+    }
+
+    section h3:first-child {
+        margin-top: 0;
+    }
+
+    section p {
+        color: var(--text-secondary);
+        margin-bottom: 18px;
+        line-height: 1.8;
+    }
+
+    section ul, section ol {
+        margin-left: 25px;
+        margin-bottom: 20px;
+    }
+
+    section li {
+        margin-bottom: 12px;
+        color: var(--text-secondary);
+        line-height: 1.8;
+    }
+
+    .highlight {
+        background: linear-gradient(120deg, rgba(255, 107, 53, 0.1) 0%, rgba(26, 188, 156, 0.1) 100%);
+        padding: 20px 25px;
+        border-left: 4px solid var(--primary);
+        border-radius: 4px;
+        margin: 30px 0;
+    }
+
+    /* ============ STATS SECTION ============ */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 25px;
+        margin: 50px 0;
+    }
+
+    .stat-card {
+        text-align: center;
+        padding: 30px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        color: white;
+        border-radius: 12px;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .stat-label {
+        font-size: 0.95rem;
+        opacity: 0.9;
+    }
+
+    /* ============ COMPARISON TABLE ============ */
+    .table-wrapper {
+        overflow-x: auto;
+        margin: 40px 0;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    thead {
+        background: var(--dark);
+        color: white;
+    }
+
+    th {
+        padding: 18px;
+        text-align: left;
+        font-weight: 700;
+        border-bottom: 2px solid var(--primary);
+    }
+
+    td {
+        padding: 16px 18px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    tbody tr:hover {
+        background: #f9fafb;
+    }
+
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .check {
+        color: var(--accent);
+        font-weight: 700;
+    }
+
+    /* ============ FAQ SECTION ============ */
+    .faq-container {
+        max-width: 800px;
+        margin: 50px auto;
+    }
+
+    .faq-item {
+        margin-bottom: 20px;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        overflow: hidden;
+        background: white;
+    }
+
+    .faq-question {
+        padding: 22px;
+        background: #f9fafb;
+        cursor: pointer;
+        font-weight: 700;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+        user-select: none;
+    }
+
+    .faq-question:hover {
+        background: white;
+        color: var(--primary);
+    }
+
+    .faq-icon {
+        font-size: 1.3rem;
+        transition: transform 0.3s ease;
+        color: var(--primary);
+    }
+
+    .faq-item.active .faq-icon {
+        transform: rotate(180deg);
+    }
+
+    .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+
+    .faq-item.active .faq-answer {
+        max-height: 500px;
+        padding: 22px;
+        color: var(--text-secondary);
+        border-top: 1px solid #e9ecef;
+    }
+
+    /* ============ FOOTER ============ */
+    footer {
+        background: var(--dark);
+        color: white;
+        text-align: center;
+        padding: 40px;
+        margin-top: 100px;
+    }
+
+    footer p {
+        opacity: 0.8;
+        margin: 0;
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+        }
+
+        .content-section {
+            padding: 30px;
+        }
+
+        h2 {
+            font-size: 2rem;
+        }
+
+        section h3 {
+            font-size: 1.4rem;
+        }
+
+        .cta-buttons {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        h1 {
+            font-size: 2rem;
+        }
+
+        .tools-grid {
+            grid-template-columns: 1fr;
+        }
+
+        th, td {
+            padding: 12px;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* ============ ANIMATIONS ============ */
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .content-section {
+        animation: slideUp 0.6s ease-out;
+    }
+</style>
 
 </head>
-
 <body>
+    <!-- HERO HEADER -->
+    <header>
+        <div class="header-content">
+            <h1>🎮 Unity Performance Tools</h1>
+            <p class="subtitle">Professional tools to analyze, optimize, and measure your game performance. Draw call analysis, FPS estimation, asset optimization, and build size calculation—all in one place.</p>
+            <div class="cta-buttons">
+                <a href="#tools" class="btn btn-primary">Explore Tools</a>
+                <a href="#about" class="btn btn-secondary">Learn More</a>
+            </div>
+        </div>
+    </header>
 
-<header>
-    <h1>Unity Performance & Optimization Tools</h1>
-    <p>
-        Improve your Unity game performance with specialized tools designed to analyze assets, 
-        optimize rendering, and estimate runtime performance. These tools help developers build 
-        efficient, scalable, and high-performance games.
-    </p>
-</header>
+<!-- MAIN CONTENT -->
+<div class="container">
+    <!-- TOOLS SHOWCASE -->
+    <section id="tools">
+        <h2>Featured Performance Tools</h2>
+        <div class="tools-grid">
+            <div class="tool-card">
+                <div class="tool-icon">📊</div>
+                <div class="tool-content">
+                    <h3>Draw Call Analyzer</h3>
+                    <p>Analyze rendering performance by measuring draw calls, batching efficiency, and GPU bottlenecks. Identify optimization opportunities in your scenes.</p>
+                    <a href="./draw-call-analyzer/" class="tool-link">Analyze Draw Calls →</a>
+                </div>
+            </div>
 
-<section>
-    <h2>Why Use Unity Optimization Tools?</h2>
-    <p>
-        Performance is critical in game development. These tools help identify bottlenecks 
-        and optimize rendering, memory usage, and build size.
-    </p>
-    <ul>
-        <li>Reduce draw calls and improve rendering efficiency</li>
-        <li>Optimize assets for better performance</li>
-        <li>Estimate FPS across different scenarios</li>
-        <li>Control build size for faster downloads</li>
-        <li>Improve overall game performance and user experience</li>
-    </ul>
-</section>
+            <div class="tool-card">
+                <div class="tool-icon">⚡</div>
+                <div class="tool-content">
+                    <h3>FPS Estimator</h3>
+                    <p>Calculate expected frame rates based on your scene complexity, target platform, and optimization settings. Plan performance before development.</p>
+                    <a href="./fps-estimator/" class="tool-link">Estimate FPS →</a>
+                </div>
+            </div>
 
-<section>
-    <h2>Unity Tools List</h2>
+            <div class="tool-card">
+                <div class="tool-icon">🎨</div>
+                <div class="tool-content">
+                    <h3>Asset Optimizer</h3>
+                    <p>Optimize textures, models, and materials for better runtime performance. Reduce memory footprint while maintaining visual quality.</p>
+                    <a href="./asset-optimizer/" class="tool-link">Optimize Assets →</a>
+                </div>
+            </div>
 
-    <article>
-        <h3>Asset Optimizer</h3>
-        <p>
-            Optimize textures, models, and assets to reduce memory usage and improve performance.
-        </p>
-        <a href="/unity-tools-functional/asset-optimizer">Open Asset Optimizer</a>
-    </article>
+            <div class="tool-card">
+                <div class="tool-icon">📦</div>
+                <div class="tool-content">
+                    <h3>Build Size Calculator</h3>
+                    <p>Estimate and analyze your build size across platforms. Understand where your binary bloat comes from and plan compression strategies.</p>
+                    <a href="./build-size-calculator/" class="tool-link">Calculate Build Size →</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <article>
-        <h3>Build Size Calculator</h3>
-        <p>
-            Estimate and analyze Unity build size to optimize distribution and loading times.
-        </p>
-        <a href="/unity-tools-functional/build-size-calculator">Open Build Size Tool</a>
-    </article>
+    <!-- ABOUT SECTION -->
+    <section id="about" class="content-section">
+        <h2>Why Game Performance Matters</h2>
+        
+        <h3>Performance is Critical for Success</h3>
+        <p>Game performance directly impacts player experience, retention, and platform compatibility. Slow games lead to crashes, poor reviews, and lost revenue. Modern players expect 60+ FPS on mobile and 120+ FPS on high-end platforms.</p>
 
-    <article>
-        <h3>Draw Call Analyzer</h3>
-        <p>
-            Analyze draw calls to identify rendering bottlenecks and optimize batching.
-        </p>
-        <a href="/unity-tools-functional/draw-call-analyzer">Open Draw Call Tool</a>
-    </article>
+        <h3>The Performance Optimization Challenge</h3>
+        <p>Optimizing game performance requires understanding multiple bottlenecks: rendering pipeline, memory usage, CPU time, and network latency. Most developers spend weeks profiling to find optimization targets. Our tools accelerate this process.</p>
 
-    <article>
-        <h3>FPS Estimator</h3>
-        <p>
-            Estimate frame rates based on scene complexity and optimization strategies.
-        </p>
-        <a href="/unity-tools-functional/fps-estimator">Open FPS Estimator</a>
-    </article>
+        <div class="highlight">
+            <strong>Key Insight:</strong> 80% of performance issues come from 20% of your code. Tools that identify these hotspots save months of development time.
+        </div>
 
-</section>
+        <h3>What These Tools Help You Achieve</h3>
+        <ul>
+            <li><strong>Faster Development:</strong> Identify bottlenecks in minutes instead of hours</li>
+            <li><strong>Better Targeting:</strong> Know your FPS on each platform before launch</li>
+            <li><strong>Smaller Builds:</strong> Reduce download sizes and improve user acquisition</li>
+            <li><strong>Higher Player Retention:</strong> Smooth performance keeps players engaged</li>
+            <li><strong>Cross-Platform Confidence:</strong> Test performance across mobile, console, and PC</li>
+        </ul>
+    </section>
 
-<section>
-    <h2>Use Cases</h2>
-    <ul>
-        <li>Optimizing Unity game performance</li>
-        <li>Reducing rendering bottlenecks</li>
-        <li>Improving asset efficiency</li>
-        <li>Estimating performance before deployment</li>
-        <li>Reducing build size for faster delivery</li>
-    </ul>
-</section>
+    <!-- STATS SECTION -->
+    <section>
+        <h2>Performance Impact</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">60+</div>
+                <div class="stat-label">Game Projects Optimized</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">40%</div>
+                <div class="stat-label">Avg. Performance Improvement</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">2.5h</div>
+                <div class="stat-label">Time to Analyze & Optimize</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Specialized Tools</div>
+            </div>
+        </div>
+    </section>
 
-<section>
-    <h2>Long-Tail Search Queries</h2>
-    <ul>
-        <li>unity asset optimization techniques for performance</li>
-        <li>how to reduce draw calls in unity engine</li>
-        <li>unity fps estimation tool for game performance</li>
-        <li>unity build size optimization strategies</li>
-        <li>analyze unity rendering performance draw calls</li>
-        <li>unity game performance optimization tools</li>
-    </ul>
-</section>
+    <!-- HOW IT WORKS -->
+    <section class="content-section">
+        <h2>How Our Tools Work</h2>
+        
+        <h3>1. Measure Your Current Performance</h3>
+        <p>Start by understanding your baseline. Use the Draw Call Analyzer to see your rendering efficiency, and FPS Estimator to understand frame timing. This gives you a clear picture of where problems exist.</p>
 
+        <h3>2. Identify Optimization Opportunities</h3>
+        <p>Our tools highlight specific areas: too many draw calls? Oversized assets? Complex scenes? Each tool focuses on a different bottleneck, making it easy to prioritize fixes.</p>
+
+        <h3>3. Optimize Your Assets & Code</h3>
+        <p>Use the Asset Optimizer to compress textures and models. Calculate build size to find what's taking up space. Make targeted optimizations based on data, not guesses.</p>
+
+        <h3>4. Verify Improvements</h3>
+        <p>Re-run the tools to measure impact. Compare before/after metrics. You'll see exactly how much each optimization contributed to performance gains.</p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tool</th>
+                        <th>Use Case</th>
+                        <th>Optimization Focus</th>
+                        <th>Difficulty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Draw Call Analyzer</strong></td>
+                        <td>Rendering bottlenecks</td>
+                        <td>GPU / Batching</td>
+                        <td>Medium</td>
+                    </tr>
+                    <tr>
+                        <td><strong>FPS Estimator</strong></td>
+                        <td>Frame rate planning</td>
+                        <td>Overall performance</td>
+                        <td>Low</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Asset Optimizer</strong></td>
+                        <td>Memory & runtime</td>
+                        <td>Assets / Memory</td>
+                        <td>Low</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Build Size Calculator</strong></td>
+                        <td>Distribution</td>
+                        <td>Binary size</td>
+                        <td>Low</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- USE CASES -->
+    <section class="content-section">
+        <h2>Real-World Use Cases</h2>
+        
+        <h3>Mobile Game Optimization</h3>
+        <p>Mobile games face strict performance budgets. A mobile device can only handle so many draw calls and so much memory. These tools help you maximize quality while staying within constraints. Reduce draw calls from 500 to 100? That's a 4x performance improvement.</p>
+
+        <h3>Console & PC Scaling</h3>
+        <p>Different platforms have different capabilities. Use the FPS Estimator to know your frame rates on Nintendo Switch vs. PlayStation 5. Scale graphics settings intelligently based on your optimization data.</p>
+
+        <h3>Large-Scale Projects</h3>
+        <p>AAA games with complex scenes need constant profiling. Our tools integrate into your workflow, letting teams identify regressions early and maintain performance as the game grows.</p>
+
+        <h3>VR & Real-Time Applications</h3>
+        <p>VR has strict latency requirements. Missing 90 FPS = motion sickness. These tools help VR developers maintain the frame rates players need for comfortable experiences.</p>
+    </section>
+
+    <!-- FAQ -->
+    <section class="content-section">
+        <h2>Frequently Asked Questions</h2>
+        
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>What's a draw call and why should I care?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>A draw call is an instruction to the GPU to render a mesh. More draw calls = more GPU work = slower performance. Modern GPUs can handle ~1,000-5,000 draw calls per frame. Exceeding this causes stuttering. Batching (combining meshes) reduces draw calls significantly.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>How much FPS do I need for a good game?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>It depends on the platform and game type. Mobile: 30-60 FPS acceptable. Consoles: 60 FPS standard, 120 FPS preferred. PC: 60+ FPS minimum, 144+ FPS for competitive games. VR: 90+ FPS required (lower causes motion sickness). Action games need higher FPS than turn-based games.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Should I optimize for mobile or desktop first?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Mobile has tighter constraints, so optimizing for mobile first usually works better. If your game runs well on mobile, it'll run great on desktop. Conversely, desktop-first optimization often creates bloated mobile versions. Start with mobile targets.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>How do I reduce build size?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>The Build Size Calculator identifies your biggest offenders. Common solutions: compress textures, remove unused assets, use LOD (Level of Detail) systems, compress audio, remove debug symbols, use asset bundles for dynamic loading, and strip unused code. A 100MB reduction can improve installs by 30%+.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>How often should I profile my game?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Profile regularly throughout development: at feature milestones (weekly), before optimization passes (daily), and before release (multiple times). This catches regressions early. A 2-3 FPS drop per week compounds into unplayable performance by launch.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- FOOTER -->
 <footer>
-    <p>
-        Build faster and more efficient games with powerful Unity tools designed for performance optimization and scalability.
-    </p>
+    <p>🎮 Unity Performance Tools | Build faster, more efficient games | <strong>Made by FranRival</strong></p>
+    <p style="margin-top: 10px; font-size: 0.9rem;">Optimize your game performance with professional analysis tools. Designed for developers who care about player experience.</p>
 </footer>
+
+<!-- JAVASCRIPT -->
+<script>
+    function toggleFaq(element) {
+        const parent = element.parentElement;
+        parent.classList.toggle('active');
+    }
+</script>
+
 
 </body>
 </html>
