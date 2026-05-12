@@ -1,22 +1,306 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Unity FPS Estimator</title>
-<meta name="description" content="Estimate FPS">
-<link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Estimador de FPS para Unity. Calcula fotogramas por segundo basado en resolución, geometría y efectos. Optimiza tu juego para diferentes plataformas.">
+    <meta name="keywords" content="FPS estimator, unity performance, frame rate calculator, game optimization, rendering performance, draw calls, geometry">
+    <meta name="author" content="Emmanuel Ibarra - FranRival">
+    <meta name="theme-color" content="#2563eb">
+
+
+<!-- Open Graph para redes sociales -->
+<meta property="og:title" content="Unity FPS Estimator - Calcula tu rendimiento">
+<meta property="og:description" content="Herramienta gratuita para estimar FPS en Unity. Calcula fotogramas por segundo según resolución, polígonos, shaders y efectos.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://franrivalbigprojects.github.io/unity-tools-functional/fps-estimator/">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Unity FPS Estimator">
+<meta name="twitter:description" content="Estima el rendimiento FPS de tu juego en Unity">
+
+<title>Unity FPS Estimator - Calcula Fotogramas por Segundo</title>
+<link rel="stylesheet" href="style.css">
+
+
 </head>
 <body>
-<div class="container">
-<h1>Unity FPS Estimator</h1>
-<p>Estimate FPS</p>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Unity FPS Estimator</h1>
+                <p class="subtitle">Estima fotogramas por segundo (FPS) basado en tu configuración de rendering y geometría</p>
+            </div>
+        </header>
 
-<input id="poly" placeholder="Polycount">
-<input id="calls" placeholder="Draw calls">
 
-<button onclick="run()">Calculate</button>
-<div class="result" id="res"></div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Intro Section -->
+        <section class="info-section">
+            <h2>¿Por qué es importante calcular FPS?</h2>
+            <ul class="benefits-list">
+                <li><strong>Experiencia fluida:</strong> 60 FPS en PC, 30-60 en móvil es el estándar de calidad</li>
+                <li><strong>Diferencial competitivo:</strong> Juegos con mejor rendimiento ganan más usuarios</li>
+                <li><strong>Optimización proactiva:</strong> Identifica cuellos de botella antes de que afecten usuarios</li>
+                <li><strong>Planificación de features:</strong> Sabe cuántos efectos/polígonos puedes agregar sin perder rendimiento</li>
+            </ul>
+        </section>
+
+        <!-- Calculator Section -->
+        <section class="calculator-section">
+            <h2>Calculadora de FPS Estimado</h2>
+            
+            <!-- Plataforma -->
+            <div class="form-group">
+                <label for="platform">Plataforma Objetivo</label>
+                <select id="platform" onchange="updatePlatformDefaults()">
+                    <option value="pc">PC (Desktop)</option>
+                    <option value="mobile">Mobile (Android/iOS)</option>
+                    <option value="console">Consola (PS5/Xbox Series X)</option>
+                    <option value="vr">VR (Meta Quest / SteamVR)</option>
+                    <option value="web">Web (Browser)</option>
+                </select>
+                <small>Selecciona tu plataforma objetivo. Esto actualizará valores recomendados.</small>
+            </div>
+
+            <!-- Resolución -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="screenWidth">Ancho de Pantalla (píxeles)</label>
+                    <input type="number" id="screenWidth" placeholder="1920" min="320" max="7680" value="1920">
+                    <small>Resolución horizontal</small>
+                </div>
+                <div class="form-group">
+                    <label for="screenHeight">Alto de Pantalla (píxeles)</label>
+                    <input type="number" id="screenHeight" placeholder="1080" min="240" max="4320" value="1080">
+                    <small>Resolución vertical</small>
+                </div>
+            </div>
+
+            <!-- Geometría -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="triangleCount">Triángulos Visibles</label>
+                    <input type="number" id="triangleCount" placeholder="ej: 5000000" min="10000" max="1000000000" value="5000000">
+                    <small>Triángulos por frame (en millones, divide por 1M)</small>
+                </div>
+                <div class="form-group">
+                    <label for="drawCalls">Draw Calls por Frame</label>
+                    <input type="number" id="drawCalls" placeholder="ej: 500" min="1" max="10000" value="500">
+                    <small>Menos es mejor. Objetivo: &lt; 1000 en móvil, &lt; 2000 en PC</small>
+                </div>
+            </div>
+
+            <!-- Efectos -->
+            <div class="form-group">
+                <label>Efectos Visuales Activos</label>
+                <div class="checkbox-grid">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="postProcessing" value="postProcessing">
+                        <label for="postProcessing" class="checkbox-label">Post-processing</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="dynamicLights" value="dynamicLights">
+                        <label for="dynamicLights" class="checkbox-label">Luces dinámicas</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="shadows" value="shadows" checked>
+                        <label for="shadows" class="checkbox-label">Sombras en tiempo real</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="reflections" value="reflections">
+                        <label for="reflections" class="checkbox-label">Reflexiones (SSR/Planar)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="particles" value="particles">
+                        <label for="particles" class="checkbox-label">Sistema de partículas</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="volumetrics" value="volumetrics">
+                        <label for="volumetrics" class="checkbox-label">Efectos volumétricos</label>
+                    </div>
+                </div>
+                <small>Cada efecto reduce FPS. Más abajo ves el impacto aproximado.</small>
+            </div>
+
+            <!-- Shader Complexity -->
+            <div class="form-group">
+                <label for="shaderComplexity">Complejidad de Shaders</label>
+                <select id="shaderComplexity">
+                    <option value="low">Bajo - Shaders simples (difuso)</option>
+                    <option value="medium" selected>Medio - PBR estándar</option>
+                    <option value="high">Alto - Múltiples texturas + normal maps</option>
+                    <option value="very-high">Muy Alto - Parallax mapping + detalles</option>
+                </select>
+                <small>Mayor complejidad = más operaciones por píxel</small>
+            </div>
+
+            <!-- Target FPS -->
+            <div class="form-group">
+                <label for="targetFps">FPS Meta</label>
+                <select id="targetFps">
+                    <option value="30">30 FPS (Móvil básico, VR mínimo)</option>
+                    <option value="60" selected>60 FPS (Estándar multiplataforma)</option>
+                    <option value="120">120 FPS (PC Gaming, consolas)</option>
+                    <option value="144">144 FPS (Competitive/Esports)</option>
+                </select>
+                <small>¿Cuántos FPS quieres mantener constantemente?</small>
+            </div>
+
+            <!-- Calculate Button -->
+            <button class="btn-calculate" onclick="calculateFPS()">
+                <span class="btn-text">Estimar FPS</span>
+            </button>
+        </section>
+
+        <!-- Results Section -->
+        <section id="resultsSection" class="results-section" style="display: none;">
+            <h2>Resultados de Estimación de FPS</h2>
+
+            <div class="results-grid">
+                <!-- FPS Estimado -->
+                <div class="result-card">
+                    <h3>FPS Estimado</h3>
+                    <div class="result-value" id="estimatedFps">0</div>
+                    <p class="result-label">fotogramas por segundo</p>
+                </div>
+
+                <!-- Estatus de Rendimiento -->
+                <div class="result-card highlight">
+                    <h3>Estado de Rendimiento</h3>
+                    <div class="result-value performance-badge" id="performanceStatus">EXCELENTE</div>
+                    <p class="result-label" id="performanceDesc">Rendimiento óptimo</p>
+                </div>
+
+                <!-- Tiempo de Frame -->
+                <div class="result-card">
+                    <h3>Tiempo de Frame</h3>
+                    <div class="result-value" id="frameTime">0 ms</div>
+                    <p class="result-label">por fotograma</p>
+                </div>
+
+                <!-- GPU Utilization -->
+                <div class="result-card">
+                    <h3>Carga Estimada GPU</h3>
+                    <div class="result-value" id="gpuLoad">0%</div>
+                    <p class="result-label">utilización</p>
+                </div>
+            </div>
+
+            <!-- Performance Chart -->
+            <div class="chart-section">
+                <h3>Impacto de Efectos en FPS</h3>
+                <div id="effectsChart" class="effects-chart">
+                    <!-- Se genera dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Detailed Breakdown -->
+            <div class="breakdown-section">
+                <h3>Desglose Detallado de Rendering</h3>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Métrica</th>
+                            <th>Valor</th>
+                            <th>Impacto en Rendimiento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Resolución</td>
+                            <td id="resDetail">-</td>
+                            <td>Píxeles a procesar</td>
+                        </tr>
+                        <tr>
+                            <td>Triángulos/Frame</td>
+                            <td id="trisDetail">-</td>
+                            <td>Carga de vértices y geometría</td>
+                        </tr>
+                        <tr>
+                            <td>Draw Calls</td>
+                            <td id="dcDetail">-</td>
+                            <td>Overhead de CPU</td>
+                        </tr>
+                        <tr>
+                            <td>Complejidad Shaders</td>
+                            <td id="shaderDetail">-</td>
+                            <td>Operaciones por píxel</td>
+                        </tr>
+                        <tr>
+                            <td>Efectos Activos</td>
+                            <td id="effectsDetail">-</td>
+                            <td>Sobrecarga total</td>
+                        </tr>
+                        <tr>
+                            <td>FPS Target vs Estimado</td>
+                            <td id="targetVsReal">-</td>
+                            <td>¿Alcanzable con esta config?</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="recommendations-section">
+                <h3>🎯 Optimizaciones Recomendadas</h3>
+                <ul id="recommendationsList" class="recommendations-list">
+                    <!-- Se generan dinámicamente -->
+                </ul>
+            </div>
+
+            <!-- Performance Tiers -->
+            <div class="tiers-section">
+                <h3>📊 Clasificación de Rendimiento</h3>
+                <div class="tier-grid">
+                    <div class="tier-card excellent">
+                        <span class="tier-label">Excelente</span>
+                        <span class="tier-fps">&gt; 90 FPS</span>
+                    </div>
+                    <div class="tier-card good">
+                        <span class="tier-label">Bueno</span>
+                        <span class="tier-fps">60-90 FPS</span>
+                    </div>
+                    <div class="tier-card fair">
+                        <span class="tier-label">Aceptable</span>
+                        <span class="tier-fps">30-60 FPS</span>
+                    </div>
+                    <div class="tier-card poor">
+                        <span class="tier-label">Deficiente</span>
+                        <span class="tier-fps">&lt; 30 FPS</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resources -->
+            <div class="resources-section">
+                <h3>📚 Guía de Optimización FPS</h3>
+                <ul class="resources-list">
+                    <li><strong>Reduce Draw Calls:</strong> Usa material batching, atlas de texturas, GPU instancing</li>
+                    <li><strong>Optimiza Geometría:</strong> Implementa LOD (Level of Detail), culling, simplificación de meshes</li>
+                    <li><strong>Shaders Eficientes:</strong> Usa forward rendering para pocas luces, deferred para muchas</li>
+                    <li><strong>Post-processing:</strong> Half-resolution o quarter-resolution para efectos pesados</li>
+                    <li><strong>Sombras Dinámicas:</strong> Limita distancia, reduce cascadas, usa shadow atlasing</li>
+                    <li><strong>Profiling:</strong> Usa Unity Profiler (CPU/GPU) para encontrar cuellos de botella reales</li>
+                    <li><strong>Targeting:</strong> Diferentes configs para diferentes dispositivos/plataformas</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Herramienta gratuita por <a href="https://emmanuelibarra.com" target="_blank">Emmanuel Ibarra</a> | 
+        <a href="https://github.com/FranRival" target="_blank">GitHub</a></p>
+    </footer>
 </div>
+
 <script src="script.js"></script>
+
+
 </body>
 </html>
