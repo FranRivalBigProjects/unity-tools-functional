@@ -444,7 +444,7 @@ description: ‘Parallax mapping + detalles’
   const color = effect.active ? (effect.impact < 0 ? ‘#ef4444’ : ‘#10b981’) : ‘#d1d5db’;
   const opacity = effect.active ? 1 : 0.3;
   
-  ```
+  
    html += `
        <div class="effect-row">
            <span class="effect-name">${effect.name}</span>
@@ -454,7 +454,7 @@ description: ‘Parallax mapping + detalles’
            </div>
        </div>
    `;
-  ```
+  
   
   });
   
