@@ -1,5 +1,559 @@
-body{font-family:Arial;background:#0f172a;color:#e2e8f0;}
-.container{max-width:700px;margin:60px auto;padding:20px;background:#1e293b;border-radius:12px;}
-input{width:100%;margin-top:10px;padding:10px;background:#0f172a;color:white;border:1px solid #334155;}
-button{margin-top:15px;padding:10px;width:100%;background:#22c55e;color:white;border:none;}
-.result{margin-top:20px;padding:10px;background:#020617;}
+/* ============================================
+   RESET Y VARIABLES
+   ============================================ */
+
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --primary-light: #dbeafe;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #3b82f6;
+    --dark: #1f2937;
+    --dark-light: #374151;
+    --dark-lighter: #4b5563;
+    --light: #f9fafb;
+    --light-dark: #e5e7eb;
+    --text: #111827;
+    --text-light: #6b7280;
+    
+    --border-radius: 0.5rem;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+/* ============================================
+   CONTENEDOR PRINCIPAL
+   ============================================ */
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 3rem 2rem;
+    border-radius: calc(var(--border-radius) * 2);
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+}
+
+.header-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.header .subtitle {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    max-width: 600px;
+    margin: 0 auto;
+    font-weight: 400;
+}
+
+/* ============================================
+   SECTIONS
+   ============================================ */
+
+section {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--light-dark);
+}
+
+section h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+    color: var(--primary);
+    border-bottom: 3px solid var(--primary-light);
+    padding-bottom: 1rem;
+}
+
+section h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: var(--dark);
+}
+
+/* ============================================
+   INFO SECTION
+   ============================================ */
+
+.info-section .benefits-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.info-section li {
+    padding: 1rem;
+    background: var(--light);
+    border-left: 4px solid var(--primary);
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.info-section li:hover {
+    background: var(--primary-light);
+    transform: translateX(4px);
+}
+
+.info-section strong {
+    color: var(--primary);
+}
+
+/* ============================================
+   FORM STYLES
+   ============================================ */
+
+.calculator-section {
+    background: white;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--dark);
+    font-size: 0.95rem;
+}
+
+.form-group input[type="number"],
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--light-dark);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: var(--transition);
+    font-family: inherit;
+}
+
+.form-group input[type="number"]:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.form-group small {
+    display: block;
+    margin-top: 0.4rem;
+    color: var(--text-light);
+    font-size: 0.85rem;
+}
+
+/* Checkbox */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--primary);
+}
+
+.checkbox-label {
+    cursor: pointer;
+    margin: 0;
+    font-weight: normal;
+}
+
+/* ============================================
+   BOTÓN CALCULAR
+   ============================================ */
+
+.btn-calculate {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-md);
+    margin-top: 1rem;
+}
+
+.btn-calculate:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-calculate:active {
+    transform: translateY(0);
+}
+
+.btn-text {
+    display: inline-block;
+}
+
+/* ============================================
+   RESULTS SECTION
+   ============================================ */
+
+.results-section {
+    animation: slideInUp 0.4s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.result-card {
+    background: linear-gradient(135deg, var(--light) 0%, #fafafa 100%);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    border: 2px solid var(--light-dark);
+    text-align: center;
+    transition: var(--transition);
+}
+
+.result-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+.result-card.highlight {
+    background: linear-gradient(135deg, var(--primary-light) 0%, #dbeafe 100%);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+.result-card h3 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-light);
+    margin-bottom: 0.75rem;
+}
+
+.result-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+.result-card.highlight .result-value {
+    color: var(--primary-dark);
+}
+
+.result-label {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin: 0;
+}
+
+/* ============================================
+   TABLA DE RESULTADOS
+   ============================================ */
+
+.breakdown-section {
+    margin: 2rem 0;
+    padding: 1.5rem 0;
+    border-top: 2px solid var(--light-dark);
+    border-bottom: 2px solid var(--light-dark);
+}
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.results-table thead {
+    background: var(--light);
+}
+
+.results-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--primary);
+    border-bottom: 2px solid var(--primary);
+}
+
+.results-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--light-dark);
+}
+
+.results-table tbody tr:hover {
+    background: var(--primary-light);
+}
+
+.results-table td:first-child {
+    font-weight: 600;
+    color: var(--dark);
+}
+
+/* ============================================
+   RECOMENDACIONES
+   ============================================ */
+
+.recommendations-section {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: var(--light);
+    border-radius: var(--border-radius);
+}
+
+.recommendations-list {
+    list-style: none;
+}
+
+.recommendations-list li {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: var(--border-radius);
+    border-left: 4px solid;
+    background: white;
+    font-size: 0.95rem;
+}
+
+.rec-warning {
+    border-left-color: var(--warning);
+    background: rgba(245, 158, 11, 0.05);
+}
+
+.rec-info {
+    border-left-color: var(--info);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.rec-success {
+    border-left-color: var(--success);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.recommendations-list strong {
+    color: var(--dark);
+}
+
+/* ============================================
+   RECURSOS
+   ============================================ */
+
+.resources-section {
+    background: linear-gradient(135deg, var(--primary-light) 0%, rgba(219, 234, 254, 0.5) 100%);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--primary);
+}
+
+.resources-list {
+    list-style: none;
+}
+
+.resources-list li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+.resources-list li:last-child {
+    border-bottom: none;
+}
+
+.resources-list strong {
+    color: var(--primary);
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+
+.footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-light);
+    border-top: 2px solid var(--light-dark);
+    margin-top: 3rem;
+}
+
+.footer a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.footer a:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .header {
+        padding: 2rem 1rem;
+    }
+
+    .header-content h1 {
+        font-size: 2rem;
+    }
+
+    .header .subtitle {
+        font-size: 1rem;
+    }
+
+    section {
+        padding: 1.5rem 1rem;
+    }
+
+    section h2 {
+        font-size: 1.5rem;
+    }
+
+    .results-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .results-table {
+        font-size: 0.85rem;
+    }
+
+    .results-table th,
+    .results-table td {
+        padding: 0.75rem;
+    }
+
+    .info-section .benefits-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-content h1 {
+        font-size: 1.5rem;
+    }
+
+    .header .subtitle {
+        font-size: 0.9rem;
+    }
+
+    .results-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .results-value {
+        font-size: 1.75rem;
+    }
+
+    section h2 {
+        font-size: 1.25rem;
+    }
+
+    .btn-calculate {
+        font-size: 1rem;
+    }
+}
+
+/* ============================================
+   OPTIMIZACIONES PARA CORE WEB VITALS
+   ============================================ */
+
+/* Evitar layout shifts */
+img, input, select {
+    max-width: 100%;
+}
+
+/* Prefers-reduced-motion para accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    body {
+        background: white;
+    }
+
+    .header {
+        background: var(--primary);
+        color: white;
+        page-break-after: avoid;
+    }
+
+    section {
+        page-break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+
+    .btn-calculate {
+        display: none;
+    }
+}
