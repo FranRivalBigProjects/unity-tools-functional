@@ -1,22 +1,227 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Unity Asset Optimizer</title>
-<meta name="description" content="Optimize assets">
-<link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Calcula el tamaño óptimo de texturas y assets en Unity. Reduce memoria, mejora rendimiento y Core Web Vitals. Herramienta gratuita para optimización de juegos.">
+    <meta name="keywords" content="asset optimizer, unity, texture compression, game optimization, memory management, bundle size, optimization tool">
+    <meta name="author" content="Emmanuel Ibarra - FranRival">
+    <meta name="theme-color" content="#2563eb">
+
+
+<!-- Open Graph para redes sociales -->
+<meta property="og:title" content="Unity Asset Optimizer - Calcula y optimiza tus assets">
+<meta property="og:description" content="Herramienta gratuita para optimizar texturas, meshes y assets en Unity. Mejora rendimiento, reduce memoria y aumenta FPS.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://franrivalbigprojects.github.io/unity-tools-functional/asset-optimizer/">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Unity Asset Optimizer">
+<meta name="twitter:description" content="Optimiza tus assets de Unity y reduce el tamaño de memoria">
+
+<title>Unity Asset Optimizer - Calcula Tamaños Óptimos de Texturas y Assets</title>
+<link rel="stylesheet" href="style.css">
+
+
 </head>
 <body>
-<div class="container">
-<h1>Unity Asset Optimizer</h1>
-<p>Optimize assets</p>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Unity Asset Optimizer</h1>
+                <p class="subtitle">Calcula y optimiza el tamaño de tus texturas, meshes y assets para mejorar rendimiento</p>
+            </div>
+        </header>
 
-<input id="textures" placeholder="Textures">
-<input id="meshes" placeholder="Meshes">
 
-<button onclick="run()">Calculate</button>
-<div class="result" id="res"></div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Intro Section -->
+        <section class="info-section">
+            <h2>¿Por qué optimizar assets?</h2>
+            <ul class="benefits-list">
+                <li><strong>Menos consumo de memoria:</strong> Reduce el uso de RAM en dispositivos móviles y consolas</li>
+                <li><strong>Mejor rendimiento:</strong> Menos tiempo de carga y mejor FPS en tiempo de ejecución</li>
+                <li><strong>Descargas más rápidas:</strong> Disminuye el tamaño de bundles y APK/IPA</li>
+                <li><strong>Mejor experiencia:</strong> Menos stuttering y lag durante el juego</li>
+            </ul>
+        </section>
+
+        <!-- Calculator Section -->
+        <section class="calculator-section">
+            <h2>Calculadora de Optimización</h2>
+            
+            <div class="form-group">
+                <label for="textureWidth">Ancho de Textura (píxeles)</label>
+                <input type="number" id="textureWidth" placeholder="ej: 2048" min="32" max="8192" step="32" value="2048">
+                <small>Rango recomendado: 512 - 4096px</small>
+            </div>
+
+            <div class="form-group">
+                <label for="textureHeight">Alto de Textura (píxeles)</label>
+                <input type="number" id="textureHeight" placeholder="ej: 2048" min="32" max="8192" step="32" value="2048">
+                <small>Debe ser potencia de 2 (512, 1024, 2048, etc.)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="textureFormat">Formato de Compresión</label>
+                <select id="textureFormat">
+                    <option value="rgba32">RGBA 32-bit (8.39 MB por textura 2048x2048)</option>
+                    <option value="rgb24">RGB 24-bit (6.29 MB por textura 2048x2048)</option>
+                    <option value="astc6x6">ASTC 6x6 (1.05 MB por textura 2048x2048)</option>
+                    <option value="astc8x8">ASTC 8x8 (0.59 MB por textura 2048x2048)</option>
+                    <option value="etc2">ETC2 (2.09 MB por textura 2048x2048)</option>
+                    <option value="dxt1">DXT1 (2.09 MB por textura 2048x2048)</option>
+                </select>
+                <small>ASTC es mejor para móviles. DXT1 para PC. Elige según tu plataforma.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="textureCount">Número de Texturas</label>
+                <input type="number" id="textureCount" placeholder="ej: 10" min="1" max="1000" value="5">
+                <small>¿Cuántas texturas tienes en tu proyecto?</small>
+            </div>
+
+            <div class="form-group">
+                <label for="mipmaps">¿Incluir Mipmaps?</label>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="mipmaps" checked>
+                    <label for="mipmaps" class="checkbox-label">Sí, incluir mipmaps (aumenta ~33% el tamaño)</label>
+                </div>
+                <small>Los mipmaps mejoran la calidad visual a distancia pero ocupan más memoria</small>
+            </div>
+
+            <div class="form-group">
+                <label for="meshVertices">Vértices en Meshes (miles)</label>
+                <input type="number" id="meshVertices" placeholder="ej: 50" min="1" max="500000" value="50">
+                <small>Aprox. Puedes dejarlo en blanco si no lo sabes</small>
+            </div>
+
+            <button class="btn-calculate" onclick="calculateOptimization()">
+                <span class="btn-text">Calcular Optimización</span>
+            </button>
+        </section>
+
+        <!-- Results Section -->
+        <section id="resultsSection" class="results-section" style="display: none;">
+            <h2>Resultados de Optimización</h2>
+
+            <div class="results-grid">
+                <!-- Tamaño Actual -->
+                <div class="result-card">
+                    <h3>Tamaño Actual</h3>
+                    <div class="result-value" id="currentSize">0 MB</div>
+                    <p class="result-label">Sin optimización</p>
+                </div>
+
+                <!-- Tamaño Optimizado -->
+                <div class="result-card highlight">
+                    <h3>Tamaño Optimizado</h3>
+                    <div class="result-value" id="optimizedSize">0 MB</div>
+                    <p class="result-label">Con compresión</p>
+                </div>
+
+                <!-- Ahorro -->
+                <div class="result-card">
+                    <h3>Ahorro de Espacio</h3>
+                    <div class="result-value" id="savings">0%</div>
+                    <p class="result-label">Reducción total</p>
+                </div>
+
+                <!-- Memoria Reducida -->
+                <div class="result-card">
+                    <h3>Memoria Ahorrada</h3>
+                    <div class="result-value" id="memorySaved">0 MB</div>
+                    <p class="result-label">RAM liberada</p>
+                </div>
+            </div>
+
+            <!-- Detailed Breakdown -->
+            <div class="breakdown-section">
+                <h3>Desglose Detallado</h3>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Métrica</th>
+                            <th>Valor</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Resolución Textura</td>
+                            <td id="resDetail">-</td>
+                            <td>Dimensiones totales de la textura</td>
+                        </tr>
+                        <tr>
+                            <td>Formato Original</td>
+                            <td id="formatOrig">-</td>
+                            <td>RGBA 32-bit (no comprimido)</td>
+                        </tr>
+                        <tr>
+                            <td>Formato Comprimido</td>
+                            <td id="formatComp">-</td>
+                            <td>Formato seleccionado</td>
+                        </tr>
+                        <tr>
+                            <td>Tamaño por Textura (Original)</td>
+                            <td id="sizePerTex">-</td>
+                            <td>Antes de optimización</td>
+                        </tr>
+                        <tr>
+                            <td>Tamaño por Textura (Optimizado)</td>
+                            <td id="sizePerTexOpt">-</td>
+                            <td>Después de compresión</td>
+                        </tr>
+                        <tr>
+                            <td>Factor de Mipmaps</td>
+                            <td id="mipmapFactor">-</td>
+                            <td>Multiplicador de memoria</td>
+                        </tr>
+                        <tr>
+                            <td>Datos de Meshes</td>
+                            <td id="meshData">-</td>
+                            <td>Memoria aproximada de vértices</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="recommendations-section">
+                <h3>🎯 Recomendaciones</h3>
+                <ul id="recommendationsList" class="recommendations-list">
+                    <!-- Se generan dinámicamente -->
+                </ul>
+            </div>
+
+            <!-- Resources -->
+            <div class="resources-section">
+                <h3>📚 Recursos y Guías</h3>
+                <ul class="resources-list">
+                    <li><strong>Texture Compression:</strong> Usa ASTC para móviles (mejor calidad/tamaño), ETC2 para Android básico, DXT1 para PC</li>
+                    <li><strong>Mipmaps:</strong> Siempre usa para objetos lejanos. Desactiva solo en UI o close-up</li>
+                    <li><strong>Asset Bundles:</strong> Divide tus assets en bundles pequeños para descarga bajo demanda</li>
+                    <li><strong>LOD Groups:</strong> Implementa Level of Detail para reducir polígonos a distancia</li>
+                    <li><strong>Atlasing:</strong> Combina múltiples texturas pequeñas en una grande para mejorar batches</li>
+                    <li><strong>Profiling:</strong> Usa Unity Profiler para monitorear memoria en tiempo real</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Herramienta gratuita por <a href="https://emmanuelibarra.com" target="_blank">Emmanuel Ibarra</a> | 
+        <a href="https://github.com/FranRival" target="_blank">GitHub</a></p>
+    </footer>
 </div>
+
 <script src="script.js"></script>
+
+
 </body>
 </html>
