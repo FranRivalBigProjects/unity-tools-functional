@@ -1,21 +1,352 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Unity Draw Call Analyzer</title>
-<meta name="description" content="Analyze draw calls">
-<link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Analizador de Draw Calls para Unity. Optimiza batches, reduce draw calls y mejora rendimiento. Herramienta gratuita de análisis de rendering.">
+    <meta name="keywords" content="draw calls, unity optimization, batching, draw call analyzer, rendering performance, GPU optimization, material batching">
+    <meta name="author" content="Emmanuel Ibarra - FranRival">
+    <meta name="theme-color" content="#2563eb">
+
+
+<!-- Open Graph para redes sociales -->
+<meta property="og:title" content="Unity Draw Call Analyzer - Optimiza tus Draw Calls">
+<meta property="og:description" content="Herramienta gratuita para analizar y optimizar draw calls en Unity. Reduce batches, mejora rendimiento y FPS.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://franrivalbigprojects.github.io/unity-tools-functional/draw-call-analyzer/">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Unity Draw Call Analyzer">
+<meta name="twitter:description" content="Analiza y optimiza draw calls de tu juego en Unity">
+
+<title>Unity Draw Call Analyzer - Optimiza Batches y Draw Calls</title>
+<link rel="stylesheet" href="style.css">
+
+
 </head>
 <body>
-<div class="container">
-<h1>Unity Draw Call Analyzer</h1>
-<p>Analyze draw calls</p>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Unity Draw Call Analyzer</h1>
+                <p class="subtitle">Analiza y optimiza draw calls, mejora batching y rendimiento de rendering</p>
+            </div>
+        </header>
 
-<input id="calls" placeholder="Draw calls">
 
-<button onclick="run()">Calculate</button>
-<div class="result" id="res"></div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Intro Section -->
+        <section class="info-section">
+            <h2>¿Por qué importan los Draw Calls?</h2>
+            <ul class="benefits-list">
+                <li><strong>Cuello de botella de CPU:</strong> Cada draw call tiene overhead. Reducir es crítico para FPS</li>
+                <li><strong>Impacto en todas las plataformas:</strong> Especialmente en móvil donde CPU es limitada</li>
+                <li><strong>Targets de industria:</strong> PC: &lt; 2000, Móvil: &lt; 1000, VR: &lt; 500</li>
+                <li><strong>ROI máximo:</strong> Optimizar draw calls es lo primero que debes hacer antes de tocar shaders</li>
+            </ul>
+        </section>
+
+        <!-- Calculator Section -->
+        <section class="calculator-section">
+            <h2>Analizador de Draw Calls</h2>
+            
+            <!-- Plataforma -->
+            <div class="form-group">
+                <label for="platform">Plataforma Objetivo</label>
+                <select id="platform" onchange="updatePlatformDefaults()">
+                    <option value="pc">PC (Desktop)</option>
+                    <option value="mobile">Mobile (Android/iOS)</option>
+                    <option value="console">Consola (PS5/Xbox Series X)</option>
+                    <option value="vr">VR (Meta Quest)</option>
+                </select>
+                <small>Selecciona tu plataforma. Los targets cambiarán automáticamente.</small>
+            </div>
+
+            <!-- Draw Calls Actuales -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="currentDrawCalls">Draw Calls Actuales</label>
+                    <input type="number" id="currentDrawCalls" placeholder="ej: 2500" min="1" max="50000" value="2500">
+                    <small>¿Cuántos draw calls tienes ahora? Úsalo del Profiler de Unity</small>
+                </div>
+                <div class="form-group">
+                    <label for="targetDrawCalls">Draw Calls Meta</label>
+                    <input type="number" id="targetDrawCalls" placeholder="ej: 1000" min="1" max="10000" value="1000">
+                    <small>Tu objetivo. Se actualiza según plataforma.</small>
+                </div>
+            </div>
+
+            <!-- Geometría -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="meshCount">Número de Meshes</label>
+                    <input type="number" id="meshCount" placeholder="ej: 500" min="1" max="100000" value="500">
+                    <small>Objetos 3D únicos en tu escena</small>
+                </div>
+                <div class="form-group">
+                    <label for="materialCount">Número de Materiales Únicos</label>
+                    <input type="number" id="materialCount" placeholder="ej: 150" min="1" max="10000" value="150">
+                    <small>Shaders diferentes usados</small>
+                </div>
+            </div>
+
+            <!-- Batching -->
+            <div class="form-group">
+                <label>Técnicas de Batching Activas</label>
+                <div class="checkbox-grid">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="staticBatching" value="staticBatching">
+                        <label for="staticBatching" class="checkbox-label">Static Batching</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="dynamicBatching" value="dynamicBatching">
+                        <label for="dynamicBatching" class="checkbox-label">Dynamic Batching</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="gpuInstancing" value="gpuInstancing">
+                        <label for="gpuInstancing" class="checkbox-label">GPU Instancing</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="atlasing" value="atlasing">
+                        <label for="atlasing" class="checkbox-label">Texture Atlasing</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="spatialCulling" value="spatialCulling" checked>
+                        <label for="spatialCulling" class="checkbox-label">Frustum Culling</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="lod" value="lod">
+                        <label for="lod" class="checkbox-label">LOD Groups</label>
+                    </div>
+                </div>
+                <small>Selecciona las técnicas que ya implementaste</small>
+            </div>
+
+            <!-- Renderers by Type -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="opaqueRenderers">Renderers Opacos</label>
+                    <input type="number" id="opaqueRenderers" placeholder="ej: 800" min="0" max="100000" value="800">
+                    <small>Meshes sólidos visibles</small>
+                </div>
+                <div class="form-group">
+                    <label for="transparentRenderers">Renderers Transparentes</label>
+                    <input type="number" id="transparentRenderers" placeholder="ej: 200" min="0" max="100000" value="200">
+                    <small>Meshes con transparencia</small>
+                </div>
+            </div>
+
+            <!-- Lights -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="dynamicLights">Luces Dinámicas Activas</label>
+                    <input type="number" id="dynamicLights" placeholder="ej: 5" min="0" max="1000" value="5">
+                    <small>Luces en tiempo real que afectan rendering</small>
+                </div>
+                <div class="form-group">
+                    <label for="shadowCastingLights">Luces que Castean Sombras</label>
+                    <input type="number" id="shadowCastingLights" placeholder="ej: 2" min="0" max="100" value="2">
+                    <small>Genera overhead adicional de draw calls</small>
+                </div>
+            </div>
+
+            <!-- Deferred vs Forward -->
+            <div class="form-group">
+                <label for="renderingPath">Path de Rendering</label>
+                <select id="renderingPath">
+                    <option value="forward" selected>Forward Rendering</option>
+                    <option value="deferred">Deferred Rendering</option>
+                </select>
+                <small>Forward: mejor para pocas luces. Deferred: mejor para muchas.</small>
+            </div>
+
+            <!-- Calculate Button -->
+            <button class="btn-calculate" onclick="analyzeDC()">
+                <span class="btn-text">Analizar Draw Calls</span>
+            </button>
+        </section>
+
+        <!-- Results Section -->
+        <section id="resultsSection" class="results-section" style="display: none;">
+            <h2>Análisis de Draw Calls</h2>
+
+            <div class="results-grid">
+                <!-- Draw Calls Actuales -->
+                <div class="result-card">
+                    <h3>Draw Calls Actuales</h3>
+                    <div class="result-value" id="currentDC">0</div>
+                    <p class="result-label">DC por frame</p>
+                </div>
+
+                <!-- Draw Calls Meta -->
+                <div class="result-card">
+                    <h3>Draw Calls Meta</h3>
+                    <div class="result-value" id="targetDC">0</div>
+                    <p class="result-label">objetivo</p>
+                </div>
+
+                <!-- Reducción Necesaria -->
+                <div class="result-card highlight">
+                    <h3>Reducción Necesaria</h3>
+                    <div class="result-value" id="dcReduction">0%</div>
+                    <p class="result-label">para alcanzar meta</p>
+                </div>
+
+                <!-- Estimated Improvement -->
+                <div class="result-card">
+                    <h3>Mejora de Rendimiento</h3>
+                    <div class="result-value" id="fpsImprovement">0%</div>
+                    <p class="result-label">FPS estimado</p>
+                </div>
+            </div>
+
+            <!-- Optimization Potential -->
+            <div class="optimization-section">
+                <h3>Potencial de Optimización</h3>
+                <div class="potential-grid">
+                    <div class="potential-card">
+                        <div class="potential-number" id="staticBatchPotential">0</div>
+                        <div class="potential-label">DC reducidos (Static Batching)</div>
+                    </div>
+                    <div class="potential-card">
+                        <div class="potential-number" id="dynamicBatchPotential">0</div>
+                        <div class="potential-label">DC reducidos (Dynamic Batching)</div>
+                    </div>
+                    <div class="potential-card">
+                        <div class="potential-number" id="instancingPotential">0</div>
+                        <div class="potential-label">DC reducidos (GPU Instancing)</div>
+                    </div>
+                    <div class="potential-card">
+                        <div class="potential-number" id="atlasRatePotential">0</div>
+                        <div class="potential-label">DC reducidos (Atlasing)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Breakdown -->
+            <div class="breakdown-section">
+                <h3>Desglose Detallado</h3>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Métrica</th>
+                            <th>Valor</th>
+                            <th>Impacto en Draw Calls</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Meshes Únicos</td>
+                            <td id="meshDetail">-</td>
+                            <td>Cada mesh puede generar múltiples DC</td>
+                        </tr>
+                        <tr>
+                            <td>Materiales Únicos</td>
+                            <td id="matDetail">-</td>
+                            <td>Cambios de material = más DC</td>
+                        </tr>
+                        <tr>
+                            <td>Renderers Opacos</td>
+                            <td id="opaqueDetail">-</td>
+                            <td>Pass de renderizado principal</td>
+                        </tr>
+                        <tr>
+                            <td>Renderers Transparentes</td>
+                            <td id="transparentDetail">-</td>
+                            <td>Pass adicional, siempre después de opacos</td>
+                        </tr>
+                        <tr>
+                            <td>Luces Dinámicas</td>
+                            <td id="lightsDetail">-</td>
+                            <td>Forward: +1 DC por luz/mesh. Deferred: +1-2 DC total</td>
+                        </tr>
+                        <tr>
+                            <td>Sombras Dinámicas</td>
+                            <td id="shadowDetail">-</td>
+                            <td>Shadow map rendering adicional</td>
+                        </tr>
+                        <tr>
+                            <td>Ratio Batching</td>
+                            <td id="batchingRatio">-</td>
+                            <td>Meshes divididas por DC reales</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bottleneck Analysis -->
+            <div class="bottleneck-section">
+                <h3>🎯 Análisis de Cuellos de Botella</h3>
+                <div id="bottleneckList" class="bottleneck-list">
+                    <!-- Se genera dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Optimization Strategy -->
+            <div class="strategy-section">
+                <h3>📋 Estrategia de Optimización Recomendada</h3>
+                <div class="strategy-priority">
+                    <div class="priority-card p1">
+                        <span class="priority-label">Prioridad 1 (Máximo Impacto)</span>
+                        <ul id="priority1" class="strategy-list">
+                            <!-- Se genera dinámicamente -->
+                        </ul>
+                    </div>
+                    <div class="priority-card p2">
+                        <span class="priority-label">Prioridad 2 (Medio Impacto)</span>
+                        <ul id="priority2" class="strategy-list">
+                            <!-- Se genera dinámicamente -->
+                        </ul>
+                    </div>
+                    <div class="priority-card p3">
+                        <span class="priority-label">Prioridad 3 (Mejora Gradual)</span>
+                        <ul id="priority3" class="strategy-list">
+                            <!-- Se genera dinámicamente -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resources -->
+            <div class="resources-section">
+                <h3>📚 Guía de Técnicas de Batching</h3>
+                <ul class="resources-list">
+                    <li><strong>Static Batching:</strong> Para geometría inmóvil. Combina meshes en memoria. 🏆 Mejor ratio calidad/impacto</li>
+                    <li><strong>Dynamic Batching:</strong> Para objetos que se mueven. Máximo 900 vértices por batch. Cuidado en móvil.</li>
+                    <li><strong>GPU Instancing:</strong> Dibuja el mismo mesh múltiples veces. Perfecto para árboles, rocas, enemigos idénticos.</li>
+                    <li><strong>Texture Atlasing:</strong> Combina múltiples texturas en una. Reduce cambios de material.</li>
+                    <li><strong>Frustum Culling:</strong> No renderiza lo que no ves. Unity lo hace automático pero verifica.</li>
+                    <li><strong>LOD Groups:</strong> Reduce polígonos a distancia. Grandes ahorros en draw calls.</li>
+                    <li><strong>Deferred Rendering:</strong> Mejor para &gt; 10 luces dinámicas. Forward para pocos lights.</li>
+                </ul>
+            </div>
+
+            <!-- Tools & References -->
+            <div class="tools-section">
+                <h3>🔧 Herramientas y Referencias</h3>
+                <ul class="tools-list">
+                    <li><strong>Unity Profiler (Stats):</strong> Muestra DC exactos. Window → Analysis → Profiler</li>
+                    <li><strong>Frame Debugger:</strong> Visualiza cada DC. Window → Analysis → Frame Debugger</li>
+                    <li><strong>SetPass Calls:</strong> Cambios de shader. Optimiza materiales.</li>
+                    <li><strong>Batch Breakers:</strong> Lo que rompe batches: cambios de material, texturas, escalas diferentes (dynamic batching)</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Herramienta gratuita por <a href="https://emmanuelibarra.com" target="_blank">Emmanuel Ibarra</a> | 
+        <a href="https://github.com/FranRival" target="_blank">GitHub</a></p>
+    </footer>
 </div>
+
 <script src="script.js"></script>
+
+
 </body>
 </html>
