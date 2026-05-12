@@ -1,30 +1,27 @@
 <!DOCTYPE html>
 
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Calculador de tamaño de build para Unity. Estima APK, IPA, EXE y WebGL. Optimiza descargas y redúcelas con compression y asset bundles.">
-    <meta name="keywords" content="build size calculator, unity, APK size, IPA size, game optimization, compression, file size estimator">
+    <meta name="description" content="Build size calculator for Unity. Estimate APK, IPA, EXE and WebGL sizes. Optimize downloads and reduce them with compression and asset bundles.">
+    <meta name="keywords" content="build size calculator, unity, APK size, IPA size, game optimization, compression, file size estimator, unity build, android game size, ios game size">
     <meta name="author" content="Emmanuel Ibarra - FranRival">
     <meta name="theme-color" content="#2563eb">
 
+    <!-- Open Graph for social media -->
+    <meta property="og:title" content="Unity Build Size Calculator - Estimate your build size">
+    <meta property="og:description" content="Free tool to calculate build size in Unity (APK, IPA, EXE, WebGL). Optimize downloads and improve install rates.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://franrivalbigprojects.github.io/unity-tools-functional/build-size-calculator/">
 
-<!-- Open Graph para redes sociales -->
-<meta property="og:title" content="Unity Build Size Calculator - Estima tu tamaño de build">
-<meta property="og:description" content="Herramienta gratuita para calcular tamaño de build en Unity (APK, IPA, EXE, WebGL). Optimiza descargas y mejora ratios de instalación.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://franrivalbigprojects.github.io/unity-tools-functional/build-size-calculator/">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Unity Build Size Calculator">
+    <meta name="twitter:description" content="Calculate your Unity build size and optimize it">
 
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Unity Build Size Calculator">
-<meta name="twitter:description" content="Calcula el tamaño de tu build de Unity y optimízalo">
-
-<title>Unity Build Size Calculator - Estima Tamaño APK, IPA, EXE</title>
-<link rel="stylesheet" href="styles.css">
-
-
+    <title>Unity Build Size Calculator - Estimate APK, IPA, EXE Size</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
@@ -32,301 +29,298 @@
         <header class="header">
             <div class="header-content">
                 <h1>Unity Build Size Calculator</h1>
-                <p class="subtitle">Estima y optimiza el tamaño de tu build. Reduce descargas con compression y asset bundles</p>
+                <p class="subtitle">Estimate and optimize your build size. Reduce downloads with compression and asset bundles</p>
             </div>
         </header>
 
-
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Intro Section -->
-        <section class="info-section">
-            <h2>¿Por qué importa el tamaño del build?</h2>
-            <ul class="benefits-list">
-                <li><strong>Tasa de instalación:</strong> Cada MB reduce ~5% descargas. 500MB vs 100MB = 20% menos usuarios</li>
-                <li><strong>Almacenamiento de dispositivo:</strong> Móviles tienen espacio limitado. Compite con aplicaciones rivales</li>
-                <li><strong>WiFi vs Mobile:</strong> Con datos móviles, usuarios cancelan descargas &gt; 50MB</li>
-                <li><strong>Store Optimization:</strong> Google Play/App Store priorizan apps más pequeñas</li>
-                <li><strong>Tiempo de boot:</strong> Builds más pequeños = carga más rápida al iniciar</li>
-            </ul>
-        </section>
-
-        <!-- Calculator Section -->
-        <section class="calculator-section">
-            <h2>Calculadora de Tamaño de Build</h2>
-            
-            <!-- Plataforma -->
-            <div class="form-group">
-                <label for="platform">Plataforma Objetivo</label>
-                <select id="platform" onchange="updatePlatformDefaults()">
-                    <option value="android">Android (APK/AAB)</option>
-                    <option value="ios">iOS (IPA)</option>
-                    <option value="pc">PC (EXE/Windows)</option>
-                    <option value="mac">macOS</option>
-                    <option value="webgl">WebGL</option>
-                </select>
-                <small>Selecciona tu plataforma. Los valores se adaptarán automáticamente.</small>
-            </div>
-
-            <!-- Assets -->
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="textureSize">Texturas Totales (MB)</label>
-                    <input type="number" id="textureSize" placeholder="ej: 300" min="0" max="10000" value="300">
-                    <small>Todas las texturas en tu proyecto (COMPRIMIDAS). Sin mipmaps.</small>
-                </div>
-                <div class="form-group">
-                    <label for="audioSize">Audio Totales (MB)</label>
-                    <input type="number" id="audioSize" placeholder="ej: 150" min="0" max="5000" value="150">
-                    <small>Música, SFX, voces. Ya comprimidos en MP3/OGG.</small>
-                </div>
-            </div>
-
-            <!-- Meshes & Scenes -->
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="meshesSize">Meshes y Modelos 3D (MB)</label>
-                    <input type="number" id="meshesSize" placeholder="ej: 80" min="0" max="2000" value="80">
-                    <small>Geometría de todos los modelos. Usa MeshOptimizer.</small>
-                </div>
-                <div class="form-group">
-                    <label for="scenesSize">Escenas (MB)</label>
-                    <input type="number" id="scenesSize" placeholder="ej: 50" min="0" max="1000" value="50">
-                    <small>Datos serializados de escenas (GameObjects, componentes)</small>
-                </div>
-            </div>
-
-            <!-- Code & Scripts -->
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="codeSize">Código y Scripts (MB)</label>
-                    <input type="number" id="codeSize" placeholder="ej: 40" min="0" max="500" value="40">
-                    <small>Assemblies .NET, plugins, bibliotecas</small>
-                </div>
-                <div class="form-group">
-                    <label for="engineSize">Engine Unity (MB)</label>
-                    <input type="number" id="engineSize" placeholder="ej: 100" min="0" max="500" value="100">
-                    <small>Runtime, librerías nativas, dependencias</small>
-                </div>
-            </div>
-
-            <!-- Compression & Optimization -->
-            <div class="form-group">
-                <label>Técnicas de Compresión</label>
-                <div class="checkbox-grid">
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="textureCompression" value="textureCompression" checked>
-                        <label for="textureCompression" class="checkbox-label">Compresión de Texturas</label>
-                    </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="meshCompression" value="meshCompression" checked>
-                        <label for="meshCompression" class="checkbox-label">Mesh Compression</label>
-                    </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="audioCompression" value="audioCompression" checked>
-                        <label for="audioCompression" class="checkbox-label">Audio Compression</label>
-                    </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="lz4" value="lz4">
-                        <label for="lz4" class="checkbox-label">LZ4 Compression</label>
-                    </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="assetBundles" value="assetBundles">
-                        <label for="assetBundles" class="checkbox-label">Asset Bundles (Contenido bajo demanda)</label>
-                    </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="stripping" value="stripping" checked>
-                        <label for="stripping" class="checkbox-label">Engine Stripping</label>
-                    </div>
-                </div>
-                <small>Selecciona las optimizaciones que aplicas</small>
-            </div>
-
-            <!-- Asset Bundle Size -->
-            <div class="form-group" id="bundleSizeGroup" style="display: none;">
-                <label for="bundleSize">Contenido en Asset Bundles (MB)</label>
-                <input type="number" id="bundleSize" placeholder="ej: 200" min="0" max="5000" value="200">
-                <small>Este contenido se descarga por separado. No incluido en build base.</small>
-            </div>
-
-            <!-- Target Device -->
-            <div class="form-group">
-                <label for="targetDevice">Dispositivo Objetivo (Android)</label>
-                <select id="targetDevice" style="display: none;">
-                    <option value="armv7">ARMv7 (32-bit, APK)</option>
-                    <option value="arm64" selected>ARM64 (64-bit, APK)</option>
-                    <option value="universal">Universal (ARMv7 + ARM64, AAB)</option>
-                </select>
-                <small id="deviceInfo">Arquitectura de procesador. Afecta tamaño.</small>
-            </div>
-
-            <!-- Calculate Button -->
-            <button class="btn-calculate" onclick="calculateBuildSize()">
-                <span class="btn-text">Calcular Tamaño de Build</span>
-            </button>
-        </section>
-
-        <!-- Results Section -->
-        <section id="resultsSection" class="results-section" style="display: none;">
-            <h2>Análisis de Tamaño de Build</h2>
-
-            <div class="results-grid">
-                <!-- Build Size -->
-                <div class="result-card">
-                    <h3>Tamaño del Build</h3>
-                    <div class="result-value" id="buildSize">0 MB</div>
-                    <p class="result-label">tamaño total</p>
-                </div>
-
-                <!-- Optimized Size -->
-                <div class="result-card highlight">
-                    <h3>Con Optimizaciones</h3>
-                    <div class="result-value" id="optimizedSize">0 MB</div>
-                    <p class="result-label">después de aplicar todas</p>
-                </div>
-
-                <!-- Ahorro -->
-                <div class="result-card">
-                    <h3>Ahorro de Tamaño</h3>
-                    <div class="result-value" id="savings">0%</div>
-                    <p class="result-label">reducción total</p>
-                </div>
-
-                <!-- Download Time -->
-                <div class="result-card">
-                    <h3>Tiempo de Descarga</h3>
-                    <div class="result-value" id="downloadTime">0 sec</div>
-                    <p class="result-label">conexión 5G/Fast WiFi</p>
-                </div>
-            </div>
-
-            <!-- Breakdown by Category -->
-            <div class="breakdown-section">
-                <h3>Desglose por Categoría</h3>
-                <div class="category-chart">
-                    <canvas id="sizeChart"></canvas>
-                </div>
-                <table class="results-table">
-                    <thead>
-                        <tr>
-                            <th>Categoría</th>
-                            <th>Tamaño Original</th>
-                            <th>Con Compresión</th>
-                            <th>% del Total</th>
-                            <th>Potencial de Reducción</th>
-                        </tr>
-                    </thead>
-                    <tbody id="categoryTableBody">
-                        <!-- Se genera dinámicamente -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Asset Bundles Analysis -->
-            <div id="bundlesAnalysisSection" class="bundles-section" style="display: none;">
-                <h3>Análisis de Asset Bundles</h3>
-                <div class="bundle-info">
-                    <p><strong>Build base:</strong> <span id="bundleBaseSize">0</span> MB</p>
-                    <p><strong>Asset bundles:</strong> <span id="bundleTotalSize">0</span> MB (descargables)</p>
-                    <p><strong>Total con bundles:</strong> <span id="bundleTotal">0</span> MB</p>
-                </div>
-                <p class="bundle-benefit">✅ Los usuarios descargan solo lo que necesitan. Ejemplo: 30MB inicial + 100MB de contenido bajo demanda = mejor UX</p>
-            </div>
-
-            <!-- Download Scenarios -->
-            <div class="scenarios-section">
-                <h3>📊 Escenarios de Descarga</h3>
-                <div class="scenario-grid">
-                    <div class="scenario-card">
-                        <span class="scenario-label">5G (500 Mbps)</span>
-                        <span class="scenario-time" id="scenario5g">-</span>
-                        <span class="scenario-note">Ultra rápido</span>
-                    </div>
-                    <div class="scenario-card">
-                        <span class="scenario-label">WiFi Fast (100 Mbps)</span>
-                        <span class="scenario-time" id="scenarioWifi">-</span>
-                        <span class="scenario-note">Rápido</span>
-                    </div>
-                    <div class="scenario-card">
-                        <span class="scenario-label">Mobile 4G (20 Mbps)</span>
-                        <span class="scenario-time" id="scenario4g">-</span>
-                        <span class="scenario-note">Lento</span>
-                    </div>
-                    <div class="scenario-card">
-                        <span class="scenario-label">Mobile 3G (5 Mbps)</span>
-                        <span class="scenario-time" id="scenario3g">-</span>
-                        <span class="scenario-note">Muy lento</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Store Requirements -->
-            <div class="store-section">
-                <h3>📦 Requisitos de Store</h3>
-                <table class="store-table">
-                    <thead>
-                        <tr>
-                            <th>Store</th>
-                            <th>Límite Recomendado</th>
-                            <th>Estado</th>
-                            <th>Nota</th>
-                        </tr>
-                    </thead>
-                    <tbody id="storeTableBody">
-                        <!-- Se genera dinámicamente -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Optimization Recommendations -->
-            <div class="recommendations-section">
-                <h3>🎯 Recomendaciones de Optimización</h3>
-                <ul id="recommendationsList" class="recommendations-list">
-                    <!-- Se generan dinámicamente -->
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Intro Section -->
+            <section class="info-section">
+                <h2>Why does build size matter?</h2>
+                <ul class="benefits-list">
+                    <li><strong>Install rate:</strong> Every MB reduces downloads by ~5%. 500MB vs 100MB = 20% fewer users</li>
+                    <li><strong>Device storage:</strong> Mobile devices have limited space. Compete with rival apps</li>
+                    <li><strong>WiFi vs Mobile data:</strong> On mobile data, users cancel downloads &gt; 50MB</li>
+                    <li><strong>Store optimization:</strong> Google Play/App Store prioritize smaller apps</li>
+                    <li><strong>Boot time:</strong> Smaller builds = faster startup loading</li>
                 </ul>
-            </div>
+            </section>
 
-            <!-- Resources -->
-            <div class="resources-section">
-                <h3>📚 Guía de Reducción de Build Size</h3>
-                <ul class="resources-list">
-                    <li><strong>Compresión de Texturas:</strong> ASTC/ETC2 (móvil), BC1/BC3 (PC). Reduce 70-80% vs RGBA.</li>
-                    <li><strong>Mesh Compression:</strong> Activa en Project Settings. Reduce 20-50% dependiendo de precisión.</li>
-                    <li><strong>Audio Compression:</strong> Vorbis (móvil), WAV (PC). MP3 es legacy.</li>
-                    <li><strong>LZ4 Compression:</strong> Compression en Player Settings. 30-40% reducción pero más CPU en startup.</li>
-                    <li><strong>Asset Bundles:</strong> Descarga bajo demanda. Estrategia: core gameplay base + contenido cosmético bajo demanda.</li>
-                    <li><strong>Engine Stripping:</strong> Remueve módulos no usados (Physics, Navigation, etc.). Ahorra 20-100MB.</li>
-                    <li><strong>Managed Code Stripping:</strong> Remueve código no referenciado. Usa Link.xml si necesitas preservar tipos dinámicos.</li>
-                    <li><strong>WebGL optimization:</strong> Minificación, brotli compression. Target WebGL Server.</li>
-                </ul>
-            </div>
+            <!-- Calculator Section -->
+            <section class="calculator-section">
+                <h2>Build Size Calculator</h2>
 
-            <!-- Build Tips -->
-            <div class="tips-section">
-                <h3>💡 Tips Pro para Builds Pequeños</h3>
-                <ul class="tips-list">
-                    <li>🎨 Usa procedural generation para content en lugar de assets pregenerados</li>
-                    <li>📱 Targets: ARMv7 o ARM64 por separado (no Universal) para APK. AAB permite Google optimizar.</li>
-                    <li>🔗 Linked.xml: Especifica qué código preservar si usas Reflection</li>
-                    <li>🗂️ Categoriza assets: gameplay crítico en build, resto en bundles</li>
-                    <li>✂️ Remueve assets no usados: uso Asset Browser y Addressables para auditar</li>
-                    <li>🎬 Video: Usa WebM (VP9) para web, H.264 para móvil</li>
-                    <li>📦 CDN: Hostea asset bundles en CDN, no en Google Play/App Store</li>
-                </ul>
-            </div>
-        </section>
-    </main>
+                <!-- Platform -->
+                <div class="form-group">
+                    <label for="platform">Target Platform</label>
+                    <select id="platform" onchange="updatePlatformDefaults()">
+                        <option value="android">Android (APK/AAB)</option>
+                        <option value="ios">iOS (IPA)</option>
+                        <option value="pc">PC (EXE/Windows)</option>
+                        <option value="mac">macOS</option>
+                        <option value="webgl">WebGL</option>
+                    </select>
+                    <small>Select your platform. Values will adapt automatically.</small>
+                </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>Herramienta gratuita por <a href="https://emmanuelibarra.com" target="_blank">Emmanuel Ibarra</a> | 
-        <a href="https://github.com/FranRival" target="_blank">GitHub</a></p>
-    </footer>
-</div>
+                <!-- Assets -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="textureSize">Total Textures (MB)</label>
+                        <input type="number" id="textureSize" placeholder="e.g.: 300" min="0" max="10000" value="300">
+                        <small>All textures in your project (COMPRESSED). Without mipmaps.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="audioSize">Total Audio (MB)</label>
+                        <input type="number" id="audioSize" placeholder="e.g.: 150" min="0" max="5000" value="150">
+                        <small>Music, SFX, voices. Already compressed as MP3/OGG.</small>
+                    </div>
+                </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-<script src="script.js"></script>
+                <!-- Meshes & Scenes -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="meshesSize">Meshes and 3D Models (MB)</label>
+                        <input type="number" id="meshesSize" placeholder="e.g.: 80" min="0" max="2000" value="80">
+                        <small>Geometry of all models. Use MeshOptimizer.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="scenesSize">Scenes (MB)</label>
+                        <input type="number" id="scenesSize" placeholder="e.g.: 50" min="0" max="1000" value="50">
+                        <small>Serialized scene data (GameObjects, components)</small>
+                    </div>
+                </div>
 
+                <!-- Code & Scripts -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="codeSize">Code and Scripts (MB)</label>
+                        <input type="number" id="codeSize" placeholder="e.g.: 40" min="0" max="500" value="40">
+                        <small>.NET assemblies, plugins, libraries</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="engineSize">Unity Engine (MB)</label>
+                        <input type="number" id="engineSize" placeholder="e.g.: 100" min="0" max="500" value="100">
+                        <small>Runtime, native libraries, dependencies</small>
+                    </div>
+                </div>
 
+                <!-- Compression & Optimization -->
+                <div class="form-group">
+                    <label>Compression Techniques</label>
+                    <div class="checkbox-grid">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="textureCompression" value="textureCompression" checked>
+                            <label for="textureCompression" class="checkbox-label">Texture Compression</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="meshCompression" value="meshCompression" checked>
+                            <label for="meshCompression" class="checkbox-label">Mesh Compression</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="audioCompression" value="audioCompression" checked>
+                            <label for="audioCompression" class="checkbox-label">Audio Compression</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="lz4" value="lz4">
+                            <label for="lz4" class="checkbox-label">LZ4 Compression</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="assetBundles" value="assetBundles">
+                            <label for="assetBundles" class="checkbox-label">Asset Bundles (On-demand content)</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="stripping" value="stripping" checked>
+                            <label for="stripping" class="checkbox-label">Engine Stripping</label>
+                        </div>
+                    </div>
+                    <small>Select the optimizations you are applying</small>
+                </div>
+
+                <!-- Asset Bundle Size -->
+                <div class="form-group" id="bundleSizeGroup" style="display: none;">
+                    <label for="bundleSize">Content in Asset Bundles (MB)</label>
+                    <input type="number" id="bundleSize" placeholder="e.g.: 200" min="0" max="5000" value="200">
+                    <small>This content is downloaded separately. Not included in the base build.</small>
+                </div>
+
+                <!-- Target Device -->
+                <div class="form-group">
+                    <label for="targetDevice">Target Device (Android)</label>
+                    <select id="targetDevice" style="display: none;">
+                        <option value="armv7">ARMv7 (32-bit, APK)</option>
+                        <option value="arm64" selected>ARM64 (64-bit, APK)</option>
+                        <option value="universal">Universal (ARMv7 + ARM64, AAB)</option>
+                    </select>
+                    <small id="deviceInfo">Processor architecture. Affects size.</small>
+                </div>
+
+                <!-- Calculate Button -->
+                <button class="btn-calculate" onclick="calculateBuildSize()">
+                    <span class="btn-text">Calculate Build Size</span>
+                </button>
+            </section>
+
+            <!-- Results Section -->
+            <section id="resultsSection" class="results-section" style="display: none;">
+                <h2>Build Size Analysis</h2>
+
+                <div class="results-grid">
+                    <!-- Build Size -->
+                    <div class="result-card">
+                        <h3>Build Size</h3>
+                        <div class="result-value" id="buildSize">0 MB</div>
+                        <p class="result-label">total size</p>
+                    </div>
+
+                    <!-- Optimized Size -->
+                    <div class="result-card highlight">
+                        <h3>With Optimizations</h3>
+                        <div class="result-value" id="optimizedSize">0 MB</div>
+                        <p class="result-label">after applying all</p>
+                    </div>
+
+                    <!-- Savings -->
+                    <div class="result-card">
+                        <h3>Size Savings</h3>
+                        <div class="result-value" id="savings">0%</div>
+                        <p class="result-label">total reduction</p>
+                    </div>
+
+                    <!-- Download Time -->
+                    <div class="result-card">
+                        <h3>Download Time</h3>
+                        <div class="result-value" id="downloadTime">0 sec</div>
+                        <p class="result-label">5G/Fast WiFi connection</p>
+                    </div>
+                </div>
+
+                <!-- Breakdown by Category -->
+                <div class="breakdown-section">
+                    <h3>Breakdown by Category</h3>
+                    <div class="category-chart">
+                        <canvas id="sizeChart"></canvas>
+                    </div>
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Original Size</th>
+                                <th>With Compression</th>
+                                <th>% of Total</th>
+                                <th>Reduction Potential</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoryTableBody">
+                            <!-- Dynamically generated -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Asset Bundles Analysis -->
+                <div id="bundlesAnalysisSection" class="bundles-section" style="display: none;">
+                    <h3>Asset Bundles Analysis</h3>
+                    <div class="bundle-info">
+                        <p><strong>Base build:</strong> <span id="bundleBaseSize">0</span> MB</p>
+                        <p><strong>Asset bundles:</strong> <span id="bundleTotalSize">0</span> MB (downloadable)</p>
+                        <p><strong>Total with bundles:</strong> <span id="bundleTotal">0</span> MB</p>
+                    </div>
+                    <p class="bundle-benefit">✅ Users only download what they need. Example: 30MB initial + 100MB on-demand content = better UX</p>
+                </div>
+
+                <!-- Download Scenarios -->
+                <div class="scenarios-section">
+                    <h3>📊 Download Scenarios</h3>
+                    <div class="scenario-grid">
+                        <div class="scenario-card">
+                            <span class="scenario-label">5G (500 Mbps)</span>
+                            <span class="scenario-time" id="scenario5g">-</span>
+                            <span class="scenario-note">Ultra fast</span>
+                        </div>
+                        <div class="scenario-card">
+                            <span class="scenario-label">Fast WiFi (100 Mbps)</span>
+                            <span class="scenario-time" id="scenarioWifi">-</span>
+                            <span class="scenario-note">Fast</span>
+                        </div>
+                        <div class="scenario-card">
+                            <span class="scenario-label">Mobile 4G (20 Mbps)</span>
+                            <span class="scenario-time" id="scenario4g">-</span>
+                            <span class="scenario-note">Slow</span>
+                        </div>
+                        <div class="scenario-card">
+                            <span class="scenario-label">Mobile 3G (5 Mbps)</span>
+                            <span class="scenario-time" id="scenario3g">-</span>
+                            <span class="scenario-note">Very slow</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Store Requirements -->
+                <div class="store-section">
+                    <h3>📦 Store Requirements</h3>
+                    <table class="store-table">
+                        <thead>
+                            <tr>
+                                <th>Store</th>
+                                <th>Recommended Limit</th>
+                                <th>Status</th>
+                                <th>Note</th>
+                            </tr>
+                        </thead>
+                        <tbody id="storeTableBody">
+                            <!-- Dynamically generated -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Optimization Recommendations -->
+                <div class="recommendations-section">
+                    <h3>🎯 Optimization Recommendations</h3>
+                    <ul id="recommendationsList" class="recommendations-list">
+                        <!-- Dynamically generated -->
+                    </ul>
+                </div>
+
+                <!-- Resources -->
+                <div class="resources-section">
+                    <h3>📚 Build Size Reduction Guide</h3>
+                    <ul class="resources-list">
+                        <li><strong>Texture Compression:</strong> ASTC/ETC2 (mobile), BC1/BC3 (PC). Reduces 70-80% vs RGBA.</li>
+                        <li><strong>Mesh Compression:</strong> Enable in Project Settings. Reduces 20-50% depending on precision.</li>
+                        <li><strong>Audio Compression:</strong> Vorbis (mobile), WAV (PC). MP3 is legacy.</li>
+                        <li><strong>LZ4 Compression:</strong> Enable in Player Settings. 30-40% reduction but more CPU usage at startup.</li>
+                        <li><strong>Asset Bundles:</strong> On-demand downloads. Strategy: core gameplay in base build + cosmetic content on demand.</li>
+                        <li><strong>Engine Stripping:</strong> Removes unused modules (Physics, Navigation, etc.). Saves 20-100MB.</li>
+                        <li><strong>Managed Code Stripping:</strong> Removes unreferenced code. Use Link.xml if you need to preserve dynamic types.</li>
+                        <li><strong>WebGL optimization:</strong> Minification, brotli compression. Target WebGL Server.</li>
+                    </ul>
+                </div>
+
+                <!-- Build Tips -->
+                <div class="tips-section">
+                    <h3>💡 Pro Tips for Small Builds</h3>
+                    <ul class="tips-list">
+                        <li>🎨 Use procedural generation for content instead of pre-generated assets</li>
+                        <li>📱 Targets: ARMv7 or ARM64 separately (not Universal) for APK. AAB lets Google optimize.</li>
+                        <li>🔗 Link.xml: Specify which code to preserve if using Reflection</li>
+                        <li>🗂️ Categorize assets: critical gameplay in build, rest in bundles</li>
+                        <li>✂️ Remove unused assets: use Asset Browser and Addressables to audit</li>
+                        <li>🎬 Video: Use WebM (VP9) for web, H.264 for mobile</li>
+                        <li>📦 CDN: Host asset bundles on CDN, not on Google Play/App Store</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Free tool by <a href="https://emmanuelibarra.com" target="_blank">Emmanuel Ibarra</a> | 
+            <a href="https://github.com/FranRival" target="_blank">GitHub</a></p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
